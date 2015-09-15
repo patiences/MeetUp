@@ -79,9 +79,6 @@ public class MapDisplayFragment extends Fragment {
 
     /**
      * String to know whether we are dealing with MWF or TR schedule.
-     * You will need to update this string based on the settings dialog at appropriate
-     * points in time. See the project page for details on how to access
-     * the value of a setting.
      */
     private String activeDay = "MWF";
 
@@ -93,13 +90,11 @@ public class MapDisplayFragment extends Fragment {
 
     /**
      * Meetup Service URL
-     * CPSC 210 Students: Complete the string.
      */
     private final String getStudentURL = "http://kramer.nss.cs.ubc.ca:8081/getStudent";
 
     /**
-     * FourSquare URLs. You must complete the client_id and client_secret with values
-     * you sign up for.
+     * FourSquare URLs. 
      */
     private static String FOUR_SQUARE_URL = "https://api.foursquare.com/v2/venues/explore?";
     private static String FOUR_SQUARE_CLIENT_ID = "VMQGAFSN1ELCYYJRLGSTTHOKJ3KFKBSPTRGFURL10K14WLHN";
@@ -139,7 +134,6 @@ public class MapDisplayFragment extends Fragment {
 
     // ******************** Android methods for starting, resuming, ...
 
-    // You should not need to touch this method
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -148,9 +142,6 @@ public class MapDisplayFragment extends Fragment {
                 .getDefaultSharedPreferences(getActivity());
         scheduleOverlay = new ArrayList<PathOverlay>();
 
-        // You need to setup the courses for the app to know about. Ideally
-        // we would access a web service like the UBC student information system
-        // but that is not currently possible
         initializeCourses();
 
         // Initialize the data for the "me" schedule. Note that this will be
@@ -161,14 +152,12 @@ public class MapDisplayFragment extends Fragment {
         buildingOverlay = createBuildingOverlay();
     }
 
-    // You should not need to touch this method
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != Activity.RESULT_OK)
             return;
     }
 
-    // You should not need to touch this method
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -189,7 +178,6 @@ public class MapDisplayFragment extends Fragment {
         return mapView;
     }
 
-    // You should not need to touch this method
     @Override
     public void onDestroyView() {
         Log.d(LOG_TAG, "onDestroyView");
@@ -197,21 +185,18 @@ public class MapDisplayFragment extends Fragment {
         super.onDestroyView();
     }
 
-    // You should not need to touch this method
     @Override
     public void onDestroy() {
         Log.d(LOG_TAG, "onDestroy");
         super.onDestroy();
     }
 
-    // You should not need to touch this method
     @Override
     public void onResume() {
         Log.d(LOG_TAG, "onResume");
         super.onResume();
     }
 
-    // You should not need to touch this method
     @Override
     public void onPause() {
         Log.d(LOG_TAG, "onPause");
@@ -219,8 +204,7 @@ public class MapDisplayFragment extends Fragment {
     }
 
     /**
-     * Save map's zoom level and centre. You should not need to
-     * touch this method
+     * Save map's zoom level and centre. 
      */
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -244,21 +228,6 @@ public class MapDisplayFragment extends Fragment {
      */
     public void showMySchedule() {
 
-        // CPSC 210 Students: You must complete the implementation of this method.
-        // The very last part of the method should call the asynchronous
-        // task (which you will also write the code for) to plot the route
-        // for "me"'s schedule for the day of the week set in the Settings
-
-        // Asynchronous tasks are a bit onerous to deal with. In order to provide
-        // all information needed in one object to plot "me"'s route, we
-        // create a SchedulePlot object and pass it to the asynchrous task.
-        // See the project page for more details.
-
-
-        // Get a routing between these points. This line of code creates and calls
-        // an asynchronous task to do the calls to MapQuest to determine a route
-        // and plots the route.
-        // Assumes mySchedulePlot is a create and initialized SchedulePlot object
 
         //start with a clear map
         clearSchedules();
@@ -266,7 +235,6 @@ public class MapDisplayFragment extends Fragment {
         activeDay = sharedPreferences.getString("dayOfWeek", "Error");
         SchedulePlot mySchedulePlot = new SchedulePlot(me.getSchedule().getSections(activeDay), me.getFirstName(), "#FF0000", R.drawable.ic_action_place);
 
-        // UNCOMMENT NEXT LINE ONCE YOU HAVE INSTANTIATED mySchedulePlot
         new GetRoutingForSchedule().execute(mySchedulePlot);
     }
 
@@ -277,11 +245,7 @@ public class MapDisplayFragment extends Fragment {
      * was plotted.
      */
     public void showRandomStudentsSchedule() {
-        // To get a random student's schedule, we have to call the MeetUp web service.
-        // Calling this web service requires a network access to we have to
-        // do this in an asynchronous task. See below in this class for where
-        // you need to implement methods for performing the network access
-        // and plotting.
+
         new GetRandomSchedule().execute();
     }
 
@@ -311,7 +275,6 @@ public class MapDisplayFragment extends Fragment {
      */
     public void findMeetupPlace() {
 
-        // CPSC 210 students: you must complete this method
         String meetUpTime = sharedPreferences.getString("timeOfDay", "Error: Could not find timeOfDay");
         meetUpTime = (meetUpTime + ":00");
         String willingToWalkString = sharedPreferences.getString("placeDistance", "Error: Could not find placeDistance");
@@ -447,8 +410,6 @@ public class MapDisplayFragment extends Fragment {
      */
     private void plotBuildings(SchedulePlot schedulePlot) {
 
-        // CPSC 210 Students: Complete this method by plotting each building in the
-        // schedulePlot with an appropriate message displayed
         String name = schedulePlot.getName();
 
         SortedSet<Section> sections = schedulePlot.getSections();
@@ -459,9 +420,6 @@ public class MapDisplayFragment extends Fragment {
         }
 
 
-        // CPSC 210 Students: You will need to ensure the buildingOverlay is in
-        // the overlayManager. The following code achieves this. You should not likely
-        // need to touch it
         OverlayManager om = mapView.getOverlayManager();
         om.add(buildingOverlay);
 
@@ -476,7 +434,6 @@ public class MapDisplayFragment extends Fragment {
      * @param drawableToUse The icon to use. Can be R.drawable.ic_action_place (or any icon in the res/drawable directory)
      */
     private void plotABuilding(Building building, String title, String msg, int drawableToUse) {
-        // CPSC 210 Students: You should not need to touch this method
         OverlayItem buildingItem = new OverlayItem(title, msg,
                 new GeoPoint(building.getLatLon().getLatitude(), building.getLatLon().getLongitude()));
 
@@ -499,7 +456,6 @@ public class MapDisplayFragment extends Fragment {
      * that will appear on the map when you select "Show My Schedule".
      */
     private void initializeMySchedule() {
-        // CPSC 210 Students; Implement this method
 
         studentManager = new StudentManager();
 
@@ -524,7 +480,6 @@ public class MapDisplayFragment extends Fragment {
      * @return the alert dialog
      */
     private AlertDialog createSimpleDialog(String msg) {
-        // CPSC 210 Students; You should not need to modify this method
         AlertDialog.Builder dialogBldr = new AlertDialog.Builder(getActivity());
         dialogBldr.setMessage(msg);
         dialogBldr.setNeutralButton(R.string.ok, null);
@@ -590,7 +545,6 @@ public class MapDisplayFragment extends Fragment {
      * @param colour A string with a hex colour value
      */
     private PathOverlay createPathOverlay(String colour) {
-        // CPSC 210 Students, you should not need to touch this method
         PathOverlay po = new PathOverlay(Color.parseColor(colour),
                 getActivity());
         Paint pathPaint = new Paint();
@@ -610,26 +564,12 @@ public class MapDisplayFragment extends Fragment {
      */
     private class GetRandomSchedule extends AsyncTask<Void, Void, SchedulePlot> {
 
-        // Some overview explanation of asynchronous tasks is on the project web page.
-
         @Override
         protected void onPreExecute() {
         }
 
         @Override
         protected SchedulePlot doInBackground(Void... params) {
-
-            // CPSC 210 Students: You must complete this method. It needs to
-            // contact the Meetup web service to get a random student's schedule.
-            // If it is successful in retrieving a student and their schedule,
-            // it needs to remember the student in the randomStudent field
-            // and it needs to create and return a schedulePlot object with
-            // all relevant information for being ready to retrieve the route
-            // and plot the route for the schedule. If no random student is
-            // retrieved, return null.
-            //
-            // Note, leave all determination of routing and plotting until
-            // the onPostExecute method below.
 
             if (randomStudents == null) {
                 randomStudents = new ArrayList<Student>();
@@ -801,9 +741,6 @@ public class MapDisplayFragment extends Fragment {
 
         @Override
         protected void onPostExecute(SchedulePlot schedulePlot) {
-            // CPSC 210 students: When this method is called, it will be passed
-            // whatever schedulePlot object you created (if any) in doBackground
-            // above. Use it to plot the route.
 
             List<GeoPoint> geoPoints = schedulePlot.getRoute();
 
@@ -845,12 +782,6 @@ public class MapDisplayFragment extends Fragment {
 
                 // The params[0] element contains the schedulePlot object
                 SchedulePlot scheduleToPlot = params[0];
-
-                // CPSC 210 Students: Complete this method. This method should
-                // call the MapQuest webservice to retrieve a List<GeoPoint>
-                // that forms the routing between the buildings on the
-                // schedule. The List<GeoPoint> should be put into
-                // scheduleToPlot object.
 
                 SortedSet<Section> sections = me.getSchedule().getSections(activeDay);
 
@@ -929,12 +860,6 @@ public class MapDisplayFragment extends Fragment {
             @Override
             protected void onPostExecute(SchedulePlot schedulePlot) {
 
-                // CPSC 210 Students: This method should plot the route onto the map
-                // with the given line colour specified in schedulePlot. If there is
-                // no route to plot, a dialog box should be displayed.
-
-                // To actually make something show on the map, you can use overlays.
-                // For instance, the following code should show a line on a map
                 List<GeoPoint> geoPoints = schedulePlot.getRoute();
 
                 if (geoPoints.size() == 0) {
@@ -965,8 +890,6 @@ public class MapDisplayFragment extends Fragment {
 
             protected String doInBackground(Void... params) {
 
-                // CPSC 210 Students: Complete this method to retrieve a string
-                // of JSON from FourSquare. Return the string from this method
             //String fourSquareHttpsString = FOUR_SQUARE_URL + "?ll=" + UBC_MARTHA_PIPER_FOUNTAIN.getLatitude() + "," +
             //                                UBC_MARTHA_PIPER_FOUNTAIN.getLongitude() +
             //                                "&query=food&client_id=" + FOUR_SQUARE_CLIENT_ID
@@ -998,9 +921,6 @@ public class MapDisplayFragment extends Fragment {
             }
 
             protected void onPostExecute(String jSONOfPlaces) {
-
-                // CPSC 210 Students: Given JSON from FourQuest, parse it and load
-                // PlaceFactory
 
                 int numberOfPlacesAdded = 0;
 
